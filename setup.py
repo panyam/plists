@@ -1,7 +1,7 @@
 from distutils.core import setup
 import fnmatch
 import os.path
-from plist import version
+from plists import version
 
 
 def pdir():
@@ -78,19 +78,18 @@ def findPackages(path, dataExclude=[]):
 # for scheme in INSTALL_SCHEMES.values(): scheme['data']=scheme['purelib']
 
 print "PDIR: ", pdir(), os.listdir(pdir())
-packages, package_data = findPackages("plist")
+packages, package_data = findPackages("plists")
 
 print "Packages: ", packages
 print "Datafiles: ", package_data
 
-setup(name="plist",
+setup(name="plists",
       version=version.VERSION,
       description="A package for managing Apple plist files.",
       long_description=file(os.path.join(pdir(), "README.md")).read(),
       author="Sri Panyam",
       author_email="sri.panyam@gmail.com",
-      url="http://github.com/panyam/plist/",
-      scripts=["./bin/plist"],
+      url="http://github.com/panyam/plists/",
       packages=packages,
       package_data=package_data,
       install_requires=[
