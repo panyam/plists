@@ -63,7 +63,23 @@ Coming Soon
 
 ### Writing to Old style plists
 
-Coming Soon.
+Objects can be written to old style plists with:
+
+```
+from plists import v1parser
+from plists import v1writer
+
+obj = v1parser.parseFile(<path_to_plist_file>)
+
+v1writer.write(obj, outstream, indentString, level)
+```
+
+The parameters are:
+
+* obj         -   The object being serialized
+* outstream   -   The output stream to which the object will be serialized.  If this is None, then a new string outputstream is written to and returned.
+* indentString  - Indentation string to be used.  If this value is None then no indentation or pretification is applied.  Otherwise this is used.
+* level       -   The level to start with when serializing.  Each child node is indented an extra level (if indentString is not None).
 
 ### Writing to XML plists
 
@@ -76,7 +92,6 @@ from plists import xmlwriter
 obj = xmlparser.parseFile(<path_to_plist_file>)
 
 xmlwriter.write(obj, outstream, indentString, level)
-
 ```
 
 The parameters are:
