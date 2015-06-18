@@ -18,7 +18,7 @@ pip install plists
 ```
 import plists
 
-obj = plists.v1parser.parseFile("path_to_file")
+obj = plists.v1parser.Parser().parseFile("path_to_file")
 
 # ... use obj as a normal python object
 ```
@@ -28,7 +28,7 @@ obj = plists.v1parser.parseFile("path_to_file")
 ```
 import plists
 
-obj = plists.v1parser.parse("some_loaded_string")
+obj = plists.v1parser.Parser().parse("some_loaded_string")
 
 # ... use obj as a normal python object
 ```
