@@ -1,4 +1,3 @@
-
 import cStringIO
 
 TOKEN_NUMBER = "TOKEN_NUMBER"
@@ -28,10 +27,11 @@ class Parser(object):
 
         obj = Parser().parse(<string_or_stream>)
     """
-    def parseFile(self, path):
-        return self.parse(open(path))
 
-    def parse(self, string_or_stream):
+    def parseFile(self, path, untokenize_=False):
+        return self.parse(open(path), untokenize_=untokenize_)
+
+    def parse(self, string_or_stream, untokenize_=False):
         """
         Parses the input stream and returns a dictionary or list at the root of the stream.
 
@@ -77,7 +77,11 @@ class Parser(object):
         self.scanner = Scanner(string_or_stream)
         self.lookahead = None
         self.tokenizer = self.scanner.tokenize()
-        return self.parse_value()
+        parsed_value = self.parse_value()
+        if not untokenize_:
+            return parsed_value
+        else:
+            return untokenize(parsed_value)
 
     def next_token(self, peek=False):
         out = self.lookahead
@@ -107,7 +111,7 @@ class Parser(object):
         token = self.next_token(peek=True)
         while token.toktype != TOKEN_END:
             if token.toktype == TOKEN_CLOSE_LIST:
-                if self.lookahead:      # consume the token if it is a lookahead one
+                if self.lookahead:  # consume the token if it is a lookahead one
                     self.next_token()
                 break
 
@@ -165,6 +169,7 @@ class Scanner(object):
     Ideally this class will not have to be called, instead use the Parser
     for to return a parsed plist stream.
     """
+
     def __init__(self, string_or_stream):
         self.instream = string_or_stream
         if type(self.instream) in (str, unicode):
@@ -229,12 +234,12 @@ class Scanner(object):
                         self.incomment = False
             else:
                 if is_delimiter(currchar):
-                    if currchar == '/':   # possible start of a comment
+                    if currchar == '/':  # possible start of a comment
                         nextchar = self.next_char()
                         if nextchar not in "*/":
                             # not a comment so as we were
                             self.currtoken += "/" + nextchar
-                        else:   # beginning of a comment
+                        else:  # beginning of a comment
                             if self.currtoken and self.started_identifier:
                                 self.started_identifier = False
                                 yield self.make_value_token()
@@ -332,15 +337,18 @@ class Token(object):
         else:
             return "%s" % (self.toktype.replace("TOKEN_", ""))
 
-    def startswith(self, prefix): return self.value.startswith(prefix)
+    def startswith(self, prefix):
+        return self.value.startswith(prefix)
 
-    def endswith(self, suffix): return self.value.endswith(suffix)
+    def endswith(self, suffix):
+        return self.value.endswith(suffix)
 
 
 class PlistDict(dict):
     """
     Overides to ensure that identifier Tokens are hashable by their value.
     """
+
     def __getitem__(self, key):
         if not super(PlistDict, self).__contains__(key):
             if type(key) is Token:
@@ -362,3 +370,24 @@ class PlistDict(dict):
     def strkeys(self):
         return [k.value for k in self.keys()]
 
+
+def untokenize(token):
+    if isinstance(token, Token):
+        return token.value
+    if isinstance(token, dict):
+        return PlistDictGetter(token)
+    if isinstance(token, list):
+        return PlistListGetter(token)
+    return token
+
+
+class PlistDictGetter(PlistDict):
+    def __getitem__(self, key):
+        token = super(PlistDictGetter, self).__getitem__(key)
+        return untokenize(token)
+
+
+class PlistListGetter(list):
+    def __getitem__(self, key):
+        token = super(PlistListGetter, self).__getitem__(key)
+        return untokenize(token)
