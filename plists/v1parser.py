@@ -35,43 +35,43 @@ class Parser(object):
         """
         Parses the input stream and returns a dictionary or list at the root of the stream.
 
-        >>> Parser("3").parse()
+        >>> Parser().parse("3")
         3
 
-        >>> Parser("'abc'").parse()
+        >>> Parser().parse("'abc'")
         'abc'
 
-        >>> Parser("()").parse()
+        >>> Parser().parse("()")
         []
 
-        >>> Parser("(1)").parse()
+        >>> Parser().parse("(1)")
         [1]
 
-        >>> Parser("(1;)").parse()
+        >>> Parser().parse("(1;)")
         [1]
 
-        >>> Parser("(1; 2; 3)").parse()
+        >>> Parser().parse("(1; 2; 3)")
         [1, 2, 3]
 
-        >>> Parser("(1; (a; b; c;))").parse()
+        >>> Parser().parse("(1; (a; b; c;))")
         [1, [a, b, c]]
 
-        >>> Parser("{}").parse()
+        >>> Parser().parse("{}")
         {}
 
-        >>> Parser("{'a' = 1;}").parse()
+        >>> Parser().parse("{'a' = 1;}")
         {'a': 1}
 
-        >>> Parser("{ident = (1; 2)}").parse()
+        >>> Parser().parse("{ident = (1; 2)}")
         {ident: [1, 2]}
 
-        >>> Parser("{ident1 = 1; ident2 = 2}").parse()
+        >>> Parser().parse("{ident1 = 1; ident2 = 2}")
         {ident2: 2, ident1: 1}
 
-        >>> Parser("{ident = ()}").parse()
+        >>> Parser().parse("{ident = ()}")
         {ident: []}
 
-        >>> Parser("{ident = hello/world}").parse()
+        >>> Parser().parse("{ident = hello/world}")
         {ident: hello/world}
         """
         self.scanner = Scanner(string_or_stream)
