@@ -92,9 +92,7 @@ setup(name="plists",
       url="http://github.com/panyam/plists/",
       packages=packages,
       package_data=package_data,
-      install_requires=[
-          "jinja2>=2.7"
-      ],
+      install_requires=[],
       classifiers=[
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
